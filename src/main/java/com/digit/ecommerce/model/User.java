@@ -26,6 +26,10 @@ public class User {
     private String password;
     private String emailId;
     private String role;
+
+
+
+
     public User(UserDTO userdto) {
         this.id = userdto.getId();
         this.role = userdto.getRole();

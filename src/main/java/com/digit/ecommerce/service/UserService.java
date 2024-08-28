@@ -2,6 +2,7 @@ package com.digit.ecommerce.service;
 import com.digit.ecommerce.dto.DataHolder;
 import com.digit.ecommerce.dto.LoginDTO;
 import com.digit.ecommerce.dto.UserDTO;
+import com.digit.ecommerce.exception.AccessDeniedException;
 import com.digit.ecommerce.exception.AuthenticationException;
 import com.digit.ecommerce.exception.UserAlreadyExistException;
 import com.digit.ecommerce.model.User;
@@ -34,8 +35,9 @@ public class UserService implements UserInterface{
 
     public List<UserDTO> getUsers(String token) {
         DataHolder decode = tokenUtility.decode(token);
-        if (!decode.getRole().equalsIgnoreCase("Admin"))
-            throw new RuntimeException("Access Denied");
+        if (!decode.getRole().equalsIgnoreCase("Admin")) {
+            throw new AccessDeniedException("Access Denied");
+        }
         List<User> allUserData = userRepository.findAll();
         return allUserData.stream().map(UserDTO::new).collect(Collectors.toList());
     }

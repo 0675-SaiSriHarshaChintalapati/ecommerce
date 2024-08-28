@@ -9,47 +9,44 @@ import com.digit.ecommerce.service.UserService;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.web.bind.annotation.*;
 import java.util.List;
-import org.springframework.beans.factory.annotation.Autowired;
-import org.springframework.web.bind.annotation.*;
-import java.util.List;
-import java.util.stream.Collectors;
 @RestController
 @RequestMapping("/users")
 public class UserController {
     @Autowired
     private UserService userService;
-    @PostMapping("/add")
-    public UserDTO addUser(@RequestBody User user) {
-        User savedUser = userService.saveUser(user);
-        return userService.convertToDTO(savedUser);
+    @PostMapping("/register")
+    public UserDTO addUser(@RequestBody UserDTO userdto) {
+        UserDTO savedUser = userService.saveUser(userdto);
+        return savedUser;
     }
 
     @GetMapping("/read")
-    public List<UserDTO> getAllUsers() {
-        return userService.getUsers();
+    public List<UserDTO> getAllUsers(@RequestHeader String token) {
+        return userService.getUsers(token);
     }
+
     @GetMapping("/login")
     public String login(@RequestBody LoginDTO loginDTO){
         String s=userService.login(loginDTO);
         return s;
     }
 
-    @GetMapping("/read/{id}")
-    public UserDTO getUserById(@PathVariable long id) {
-        User user = userService.getUserById(id);
+    @GetMapping("/get")
+    public UserDTO getUserById(@RequestHeader String token) {
+        User user = userService.getUserByToken(token);
         return userService.convertToDTO(user);
     }
 
-    @PutMapping("/update/{id}")
-    public UserDTO updateUser(@PathVariable long id, @RequestBody UserDTO userDTO) {
+    @PutMapping("/update")
+    public UserDTO updateUser(@RequestHeader String token, @RequestBody UserDTO userDTO) {
         User user = userService.convertToEntity(userDTO);
-        User updatedUser = userService.updateUser(id, user);
+        User updatedUser = userService.updateUser(token, user);
         return userService.convertToDTO(updatedUser);
     }
 
-    @DeleteMapping("/delete/{id}")
-    public String deleteUser(@PathVariable long id) {
-        return userService.deleteUser(id);
+    @DeleteMapping("/delete")
+    public String deleteUser(@RequestHeader String token) {
+        return userService.deleteUser(token);
     }
 
 }

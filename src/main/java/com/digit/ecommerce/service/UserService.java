@@ -1,4 +1,5 @@
 package com.digit.ecommerce.service;
+import com.digit.ecommerce.dto.DataHolder;
 import com.digit.ecommerce.dto.LoginDTO;
 import com.digit.ecommerce.dto.UserDTO;
 import com.digit.ecommerce.exception.AuthenticationException;
@@ -14,32 +15,40 @@ import java.util.List;
 import java.util.stream.Collectors;
 
 @Service
-public class UserService {
+public class UserService implements UserInterface{
     @Autowired
     private UserRepository userRepository;
     @Autowired
     TokenUtility tokenUtility;
-    public User saveUser(User user) {
-        User userByUsername = userRepository.findByfirstName(user.getFirstName());
-        User userByEmail = userRepository.findByemailId(user.getEmailId());
-        if ((userByUsername != null) || (userByEmail != null)) {
+    public UserDTO saveUser(UserDTO userdto) {
+        User userByUsername = userRepository.findByfirstName(userdto.getFirstName());
+        User userByEmail = userRepository.findByemailId(userdto.getEmailId());
+        if ((userByUsername != null) || (userByEmail != null)||userdto == null) {
             throw new UserAlreadyExistException("User Already Exists with that credential");
         }
-        return userRepository.save(user);
+        User user=convertToEntity(userdto);
+        UserDTO userdto1= convertToDTO(user);
+        userRepository.save(user);
+        return userdto1;
     }
 
-    public List<UserDTO> getUsers() {
-        List<User> find= userRepository.findAll();
-        return find.stream()
-                .map(this::convertToDTO)
-                .collect(Collectors.toList());
+    public List<UserDTO> getUsers(String token) {
+        DataHolder decode = tokenUtility.decode(token);
+        if (!decode.getRole().equalsIgnoreCase("Admin"))
+            throw new RuntimeException("Access Denied");
+        List<User> allUserData = userRepository.findAll();
+        return allUserData.stream().map(UserDTO::new).collect(Collectors.toList());
     }
 
-    public User getUserById(long id) {
+    public User getUserByToken(String token) {
+        DataHolder decode = tokenUtility.decode(token);
+        Long id= decode.getId();
         return userRepository.findById(id).orElse(null);
     }
 
-    public User updateUser(long id, User user) {
+    public User updateUser(String token, User user) {
+        DataHolder decode = tokenUtility.decode(token);
+        Long id= decode.getId();
         User existingUser = userRepository.findById(id).orElse(null);
         if (existingUser != null) {
             existingUser.setFirstName(user.getFirstName());
@@ -54,7 +63,9 @@ public class UserService {
         return null;
     }
 
-    public String deleteUser(long id) {
+    public String deleteUser(String token) {
+        DataHolder decode = tokenUtility.decode(token);
+        Long id= decode.getId();
         userRepository.deleteById(id);
         return "User removed !! " + id;
     }
@@ -75,13 +86,14 @@ public class UserService {
     }
 
     public UserDTO convertToDTO(User user) {
-        UserDTO userDTO = new UserDTO();
+        UserDTO userDTO = new UserDTO(user);
         userDTO.setId(user.getId());
         userDTO.setFirstName(user.getFirstName());
         userDTO.setLastName(user.getLastName());
         userDTO.setDob(user.getDob());
         userDTO.setEmailId(user.getEmailId());
         userDTO.setRole(user.getRole());
+        userDTO.setPassword(user.getPassword());
         return userDTO;
     }
 
@@ -93,6 +105,8 @@ public class UserService {
         user.setDob(userDTO.getDob());
         user.setEmailId(userDTO.getEmailId());
         user.setRole(userDTO.getRole());
+        user.setPassword(userDTO.getPassword());
+
         return user;
     }
 

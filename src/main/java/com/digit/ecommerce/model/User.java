@@ -1,4 +1,5 @@
 package com.digit.ecommerce.model;
+import com.digit.ecommerce.dto.UserDTO;
 import jakarta.persistence.*;
 import jakarta.validation.constraints.*;
 import lombok.Data;
@@ -12,35 +13,33 @@ import java.time.LocalDate;
 @Entity
 @Table(name = "user_details")
 public class User {
+
     @Id
     @GeneratedValue(strategy = GenerationType.IDENTITY)
     private Long id;
-    @NotBlank(message = "First name is mandatory")
-    @Size(max = 255, message = "First name must be less than 255 characters")
+
     private String firstName;
-
-    @NotBlank(message = "Last name is mandatory")
-    @Size(max = 255, message = "Last name must be less than 255 characters")
     private String lastName;
-
-    @Past(message = "Date of birth must be in the past")
-    @NotNull(message = "Date of birth is mandatory")
     private LocalDate dob;
-
     private LocalDate registeredDate = LocalDate.now();
-
     private LocalDate updatedDate = LocalDate.now();
-
-    @NotBlank(message = "Password is mandatory")
-    @Size(min = 8, message = "Password must be at least 8 characters long")
     private String password;
-
-    @NotBlank(message = "Email ID is mandatory")
-    @Email(message = "Email should be valid")
     private String emailId;
-
-    @NotBlank(message = "Role is mandatory")
-    //changes
     private String role;
+
+
+
+
+    public User(UserDTO userdto) {
+        this.id = userdto.getId();
+        this.role = userdto.getRole();
+        this.emailId = userdto.getEmailId();
+        this.password = userdto.getPassword();
+        this.updatedDate = userdto.getUpdatedDate();
+        this.registeredDate = userdto.getUpdatedDate();
+        this.dob = userdto.getDob();
+        this.lastName = userdto.getLastName();
+        this.firstName = userdto.getFirstName();
+    }
 }
 

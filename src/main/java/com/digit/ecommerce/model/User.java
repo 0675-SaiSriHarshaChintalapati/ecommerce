@@ -12,9 +12,11 @@ import java.time.LocalDate;
 @Entity
 @Table(name = "user_details")
 public class User {
+
     @Id
     @GeneratedValue
     private Long id;
+
     @NotBlank(message = "First name is mandatory")
     @Size(max = 255, message = "First name must be less than 255 characters")
     private String firstName;

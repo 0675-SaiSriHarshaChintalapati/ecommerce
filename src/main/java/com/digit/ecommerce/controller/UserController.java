@@ -18,6 +18,7 @@ import java.util.stream.Collectors;
 public class UserController {
     @Autowired
     private UserService userService;
+
     @PostMapping("/add")
     public UserDTO addUser(@RequestBody User user) {
         User savedUser = userService.saveUser(user);
@@ -28,6 +29,7 @@ public class UserController {
     public List<UserDTO> getAllUsers() {
         return userService.getUsers();
     }
+
     @GetMapping("/login")
     public String login(@RequestBody LoginDTO loginDTO){
         String s=userService.login(loginDTO);

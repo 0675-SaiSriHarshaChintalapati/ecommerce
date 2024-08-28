@@ -16,5 +16,19 @@ public class GlobalException {
     public ResponseEntity<?> UserAlreadyExistException(AuthenticationException e) {
         return new ResponseEntity<>(e.getMessage(), HttpStatus.BAD_REQUEST);
     }
+    @ExceptionHandler(BookAlreadyExistsException.class)
+    public ResponseEntity<?> BookAlreadyExistsException (BookAlreadyExistsException e){
+        return new ResponseEntity<>(e.getMessage(), HttpStatus.BAD_REQUEST);
+    }
+
+    @ExceptionHandler(DataNotFoundException.class)
+    public ResponseEntity<?> DataNotFoundException(DataNotFoundException e){
+        return new ResponseEntity<>(e.getMessage(),HttpStatus.BAD_REQUEST);
+    }
+
+    @ExceptionHandler(RoleNotAllowedException.class)
+    public ResponseEntity<?> RoleNotAllowedException(RoleNotAllowedException e){
+        return new ResponseEntity<>(e.getMessage(),HttpStatus.BAD_REQUEST);
+    }
 }
 

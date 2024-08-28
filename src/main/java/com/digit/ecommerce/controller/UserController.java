@@ -40,13 +40,13 @@ public class UserController {
     @PutMapping("/update")
     public UserDTO updateUser(@RequestHeader String token, @RequestBody UserDTO userDTO) {
         User user = userService.convertToEntity(userDTO);
-        User updatedUser = userService.updateUser(token, user);
+        User updatedUser = userService.updateUser(token,user);
         return userService.convertToDTO(updatedUser);
     }
 
-    @DeleteMapping("/delete")
-    public String deleteUser(@RequestHeader String token) {
-        return userService.deleteUser(token);
+    @DeleteMapping("/delete/{id}")
+    public String deleteUser(@RequestHeader String token ,@PathVariable Long id) {
+        return userService.deleteUser(token,id);
     }
 
 }

@@ -48,6 +48,7 @@ public class UserService implements UserInterface{
         return userRepository.findById(id).orElse(null);
     }
 
+    @Override
     public User updateUser(String token, User user) {
         DataHolder decode = tokenUtility.decode(token);
         Long id= decode.getId();
@@ -65,9 +66,11 @@ public class UserService implements UserInterface{
         return null;
     }
 
-    public String deleteUser(String token) {
+    public String deleteUser(String token,Long id) {
         DataHolder decode = tokenUtility.decode(token);
-        Long id= decode.getId();
+        if (!decode.getRole().equalsIgnoreCase("Admin")) {
+            throw new AccessDeniedException("Access Denied");
+        }
         userRepository.deleteById(id);
         return "User removed !! " + id;
     }

@@ -11,7 +11,7 @@ public interface UserInterface {
     public List<UserDTO> getUsers(String token);
     public User getUserByToken(String token);
     public User updateUser(String token, User user);
-    public String deleteUser(String token);
+    public String deleteUser(String token,Long id);
     public String login(LoginDTO loginDTO);
     public UserDTO convertToDTO(User user);
     public User convertToEntity(UserDTO userDTO);

@@ -47,25 +47,37 @@ public class UserService implements UserInterface{
         Long id= decode.getId();
         return userRepository.findById(id).orElse(null);
     }
-
     @Override
     public User updateUser(String token, User user) {
         DataHolder decode = tokenUtility.decode(token);
         Long id= decode.getId();
         User existingUser = userRepository.findById(id).orElse(null);
-        if (existingUser != null) {
-            existingUser.setFirstName(user.getFirstName());
-            existingUser.setLastName(user.getLastName());
-            existingUser.setDob(user.getDob());
-            existingUser.setUpdatedDate(LocalDate.now());
-            existingUser.setPassword(user.getPassword());
-            existingUser.setEmailId(user.getEmailId());
-            existingUser.setRole(user.getRole());
+        if (existingUser!= null) {
+            if(user.getFirstName()!=null) {
+                existingUser.setFirstName(user.getFirstName());
+            }
+            if(user.getLastName()!=null) {
+                existingUser.setLastName(user.getLastName());
+            }
+            if(user.getDob()!=null) {
+                existingUser.setDob(user.getDob());
+            }
+            if(user.getUpdatedDate()!=null) {
+                existingUser.setUpdatedDate(LocalDate.now());
+            }
+            if(user.getPassword()!=null) {
+                existingUser.setPassword(user.getPassword());
+            }
+            if(user.getEmailId()!=null) {
+                existingUser.setEmailId(user.getEmailId());
+            }
+            if(user.getRole()!=null) {
+                existingUser.setRole(user.getRole());
+            }
             return userRepository.save(existingUser);
         }
         return null;
     }
-
     public String deleteUser(String token,Long id) {
         DataHolder decode = tokenUtility.decode(token);
         if (!decode.getRole().equalsIgnoreCase("Admin")) {

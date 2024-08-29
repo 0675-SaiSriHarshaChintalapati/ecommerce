@@ -1,18 +1,11 @@
 package com.digit.ecommerce.repository;
 
-import com.digit.ecommerce.model.Books;
+import com.digit.ecommerce.model.AddImage;
 import org.springframework.data.jpa.repository.JpaRepository;
 import org.springframework.stereotype.Repository;
 import org.springframework.transaction.annotation.Transactional;
 
+@Transactional
 @Repository
-public interface BookRepository extends JpaRepository<Books, Long> {
-
-    @Transactional
-    Books findBybookName(String bookName);
-
-//    @Transactional
-//    Books getByQuantity(Long id);
+public interface ImageRepository extends JpaRepository<AddImage,Long> {
 }
-
-

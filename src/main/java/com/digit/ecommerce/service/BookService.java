@@ -11,6 +11,7 @@ import com.digit.ecommerce.model.User;
 import com.digit.ecommerce.repository.BookRepository;
 import com.digit.ecommerce.repository.UserRepository;
 import com.digit.ecommerce.util.TokenUtility;
+import jakarta.persistence.criteria.Order;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
@@ -19,11 +20,11 @@ import org.springframework.stereotype.Service;
 
 import java.io.IOException;
 import java.util.List;
-
+import java.util.Optional;
 
 
 @Service
-public class BookService implements BooksInterface{
+public class BookService implements BooksInterface {
 
     @Autowired
     BookRepository bookRepository;
@@ -81,7 +82,7 @@ public class BookService implements BooksInterface{
         String requiredRole = "admin";
         Long Admin_id = dataHolder.getId();
         User objUser = userRepository.findById(Admin_id).orElse(null);
-        if (requiredRole.equalsIgnoreCase(dataHolder.getRole())&& objUser != null) {
+        if (requiredRole.equalsIgnoreCase(dataHolder.getRole()) && objUser != null) {
             if (!bookRepository.existsById(id)) {
                 throw new DataNotFoundException("Book with ID " + id + " not found");
             }
@@ -93,13 +94,13 @@ public class BookService implements BooksInterface{
     }
 
 
-    public BooksDto updateBooks(Long id, BooksDto bookDetails , String token) {
+    public BooksDto updateBooks(Long id, BooksDto bookDetails, String token) {
         DataHolder dataHolder = tokenUtility.decode(token);
         String requiredRole = "admin";
-        Books books=new Books(bookDetails);
+        Books books = new Books(bookDetails);
         Long Admin_id = dataHolder.getId();
         User objUser = userRepository.findById(Admin_id).orElse(null);
-        if (requiredRole.equalsIgnoreCase(dataHolder.getRole())&& objUser != null) {
+        if (requiredRole.equalsIgnoreCase(dataHolder.getRole()) && objUser != null) {
             Books existing = bookRepository.findById(id)
                     .orElseThrow(() -> new RuntimeException("Book not found with id: " + id));
             if (bookDetails.getBookAuthor() != null) {
@@ -119,48 +120,55 @@ public class BookService implements BooksInterface{
             }
             Books updatedBooks = bookRepository.save(existing);
             return new BooksDto(updatedBooks);
-        }
-        else {
+        } else {
             throw new RoleNotAllowedException("Only admin can have Access to update");
         }
     }
 
 
-    public BooksDto updatePrice( Long id, BooksDto booksDto, String token) throws RuntimeException {
+    public BooksDto updatePrice(Long id, BooksDto booksDto, String token) throws RuntimeException {
         DataHolder dataHolder = tokenUtility.decode(token);
-        Books books=new Books(booksDto);
+        Books books = new Books(booksDto);
         String requiredRole = "admin";
         Long Admin_id = dataHolder.getId();
         User objUser = userRepository.findById(Admin_id).orElse(null);
-        if (requiredRole.equalsIgnoreCase(dataHolder.getRole())&& objUser != null) {
+        if (requiredRole.equalsIgnoreCase(dataHolder.getRole()) && objUser != null) {
             Books existing = bookRepository.findById(id)
                     .orElseThrow(() -> new RuntimeException("Book not found with id " + id));
             if (books.getBookPrice() != null) {
                 existing.setBookPrice(books.getBookPrice());
             }
-            Books obj=bookRepository.save(existing);
-            BooksDto objdto=new BooksDto(obj);
+            Books obj = bookRepository.save(existing);
+            BooksDto objdto = new BooksDto(obj);
             return objdto;
         } else {
             throw new RoleNotAllowedException("Only admin can change the prices");
         }
     }
 
-//public void updateQuantity(Order order) {
-    // Order BookId = bookRepository.getById();
-//        Books books = bookRepository.findById(book_Id).orElse(null);
-//        if (books != null) {
-//            if (status.equalsIgnoreCase("ordered")) {
-//                books.setBookQuantity(books.getBookQuantity() - quantity);
-//            } else {
-//                books.setBookQuantity(books.getBookQuantity() + quantity);
-//            }
-//            bookRepository.save(books);
-//        } else {
-//            // Handle the case where the book is not found
-//            System.out.println("Book not found");
-//        }
-//    }
-}
 
+    public BooksDto updateQuantity(String token , Long Book_id , Long quantity) {
+        DataHolder dataHolder = tokenUtility.decode(token);
+        //Getting book Quantity from orders
+//         Books book = bookRepository.findById(Book_id).orElse(null);
+//        if(order.getStatus.equalsIgnoreCase("cancelled")) {
+//            book.setBookQuantity(book.getQuantity()+(order.getBookQuantity));
+//        }
+//        else if(order.getStatus.equalsIgnoreCase("ordered")) {
+//            book.setBookQuantity((book.getBookQuantity)-(order.getBookQuantity));
+//        }
+//        else{
+//            throw new RuntimeException("Invalid status");
+//        }
+//               BooksDto booksDto = new BooksDto(book);
+//              return booksDto;
+//       }
+            Books book = bookRepository.findById(Book_id).orElse(null);
+            book.setBookQuantity(quantity);
+            BooksDto booksDto = new BooksDto(book);
+            return booksDto;
+        }
+
+
+}
 

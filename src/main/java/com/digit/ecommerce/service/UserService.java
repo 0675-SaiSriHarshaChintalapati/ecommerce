@@ -42,6 +42,12 @@ public class UserService implements UserInterface{
         return allUserData.stream().map(UserDTO::new).collect(Collectors.toList());
     }
 
+    public List<UserDTO> getUsersCart(String token) {
+        DataHolder dataHolder=tokenUtility.decode(token);
+        List<User> allUserData = userRepository.findAll();
+        return allUserData.stream().map(UserDTO::new).collect(Collectors.toList());
+    }
+
     public User getUserByToken(String token) {
         DataHolder decode = tokenUtility.decode(token);
         Long id= decode.getId();
@@ -53,14 +59,28 @@ public class UserService implements UserInterface{
         DataHolder decode = tokenUtility.decode(token);
         Long id= decode.getId();
         User existingUser = userRepository.findById(id).orElse(null);
-        if (existingUser != null) {
-            existingUser.setFirstName(user.getFirstName());
-            existingUser.setLastName(user.getLastName());
-            existingUser.setDob(user.getDob());
-            existingUser.setUpdatedDate(LocalDate.now());
-            existingUser.setPassword(user.getPassword());
-            existingUser.setEmailId(user.getEmailId());
-            existingUser.setRole(user.getRole());
+        if (existingUser!= null) {
+            if(user.getFirstName()!=null) {
+                existingUser.setFirstName(user.getFirstName());
+            }
+            if(user.getLastName()!=null) {
+                existingUser.setLastName(user.getLastName());
+            }
+            if(user.getDob()!=null) {
+                existingUser.setDob(user.getDob());
+            }
+            if(user.getUpdatedDate()!=null) {
+                existingUser.setUpdatedDate(LocalDate.now());
+            }
+            if(user.getPassword()!=null) {
+                existingUser.setPassword(user.getPassword());
+            }
+            if(user.getEmailId()!=null) {
+                existingUser.setEmailId(user.getEmailId());
+            }
+            if(user.getRole()!=null) {
+                existingUser.setRole(user.getRole());
+            }
             return userRepository.save(existingUser);
         }
         return null;

@@ -1,11 +1,13 @@
 package com.digit.ecommerce.model;
 import com.digit.ecommerce.dto.UserDTO;
+import com.fasterxml.jackson.annotation.JsonManagedReference;
 import jakarta.persistence.*;
 import jakarta.validation.constraints.*;
 import lombok.Data;
 import lombok.NoArgsConstructor;
 import lombok.AllArgsConstructor;
 import java.time.LocalDate;
+import java.util.List;
 
 @Data
 @NoArgsConstructor
@@ -27,8 +29,9 @@ public class User {
     private String emailId;
     private String role;
 
-
-
+    @OneToMany(cascade = CascadeType.PERSIST,mappedBy = "user")
+    @JsonManagedReference(value = "cartref")
+    private List<Cart> cart;
 
     public User(UserDTO userdto) {
         this.id = userdto.getId();

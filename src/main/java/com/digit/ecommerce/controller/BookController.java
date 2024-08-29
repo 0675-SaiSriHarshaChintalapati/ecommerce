@@ -25,7 +25,7 @@ public class BookController {
     }
 
     @GetMapping("/viewBooks")
-    public ResponseEntity<List<BooksDto>> viewAllBooks(String token) {
+    public ResponseEntity<List<BooksDto>> viewAllBooks(@RequestHeader String token) {
         List<BooksDto> booksDtoList = bookService.viewAllBooks(token);
         return ResponseEntity.ok(booksDtoList);
     }
@@ -37,15 +37,16 @@ public class BookController {
     }
 
     @PutMapping("/update/{Book_id}")
-    public ResponseEntity<BooksDto> updateBooks(@PathVariable Long id, @RequestBody Books books,@RequestHeader String token) {
-        BooksDto updated = bookService.updateBooks(id, books,token);
+    public ResponseEntity<BooksDto> updateBooks(@PathVariable Long Book_id, @RequestBody BooksDto booksDto,@RequestHeader String token) {
+        BooksDto updated = bookService.updateBooks(Book_id, booksDto,token);
         return ResponseEntity.ok(updated);
     }
 
 
-    @PutMapping("/update/price/{id}")
-    public ResponseEntity<BooksDto> updateBooksPrice(@PathVariable Long id, @RequestBody Books books, @RequestHeader String token) {
-        BooksDto updated = bookService.updatePrice(id, books,token);
+    @PutMapping("/update/price/{Book_id}")
+    public ResponseEntity<BooksDto> updateBooksPrice(@PathVariable Long Book_id, @RequestBody BooksDto booksDto, @RequestHeader String token) {
+        BooksDto updated = bookService.updatePrice(Book_id, booksDto,token);
         return ResponseEntity.ok(updated);
     }
 }
+

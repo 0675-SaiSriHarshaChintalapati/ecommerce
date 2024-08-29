@@ -38,7 +38,7 @@ public class BookService {
 
 
 
-    public ResponseEntity<?> addBooks(BooksDto booksDto, String token) throws RuntimeException {
+    public ResponseEntity<?> addBooks(BooksDto booksDto, String token) {
         DataHolder dataHolder = tokenUtility.decode(token);
         String requiredRole = "admin";
         Long Admin_id = dataHolder.getId();
@@ -94,9 +94,10 @@ public class BookService {
     }
 
 
-    public BooksDto updateBooks(Long id, Books bookDetails , String token) {
+    public BooksDto updateBooks(Long id, BooksDto bookDetails , String token) {
         DataHolder dataHolder = tokenUtility.decode(token);
         String requiredRole = "admin";
+        Books books=new Books(bookDetails);
         if (requiredRole.equalsIgnoreCase(dataHolder.getRole())) {
             Books existing = bookRepository.findById(id)
                     .orElseThrow(() -> new RuntimeException("Book not found with id: " + id));
@@ -127,8 +128,9 @@ public class BookService {
     }
 
 
-    public BooksDto updatePrice( Long id, Books books, String token) throws RuntimeException {
+    public BooksDto updatePrice( Long id, BooksDto booksDto, String token) throws RuntimeException {
         DataHolder dataHolder = tokenUtility.decode(token);
+        Books books=new Books(booksDto);
         String requiredRole = "admin";
         if (requiredRole.equalsIgnoreCase(dataHolder.getRole())) {
             Books existing = bookRepository.findById(id)
@@ -142,6 +144,10 @@ public class BookService {
         } else {
             throw new RoleNotAllowedException("Only admin can change the prices");
         }
+    }
+    public Books getBookByID(Long id) {
+        Books book = bookRepository.findById(id).orElseThrow(() -> new RuntimeException("Book not found"));
+        return book;
     }
 
 }

@@ -104,7 +104,7 @@ public class UserService implements UserInterface{
 
     public UserDTO convertToDTO(User user) {
         UserDTO userDTO = new UserDTO(user);
-        userDTO.setId(user.getId());
+
         userDTO.setFirstName(user.getFirstName());
         userDTO.setLastName(user.getLastName());
         userDTO.setDob(user.getDob());
@@ -116,7 +116,6 @@ public class UserService implements UserInterface{
 
     public User convertToEntity(UserDTO userDTO) {
         User user = new User();
-        user.setId(userDTO.getId());
         user.setFirstName(userDTO.getFirstName());
         user.setLastName(userDTO.getLastName());
         user.setDob(userDTO.getDob());

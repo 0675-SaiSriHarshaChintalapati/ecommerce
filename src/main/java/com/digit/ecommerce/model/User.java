@@ -31,7 +31,7 @@ public class User {
 
 
     public User(UserDTO userdto) {
-        this.id = userdto.getId();
+
         this.role = userdto.getRole();
         this.emailId = userdto.getEmailId();
         this.password = userdto.getPassword();

@@ -30,7 +30,7 @@ public class UserDTO {
 
     private LocalDate registeredDate = LocalDate.now();
 
-    private LocalDate updatedDate = LocalDate.now();
+    private LocalDate updatedDate;
 
     @NotBlank(message = "Password is mandatory")
     @Size(min = 8, message = "Password must be at least 8 characters long")

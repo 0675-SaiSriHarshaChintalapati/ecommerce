@@ -8,5 +8,6 @@ import java.util.List;
 public interface OrderRepository extends JpaRepository<Orders, Long> {
     List<Orders> findByCancel(boolean cancel);
     List<Orders> findByUserId(Long userId);
+    List<Orders> findByBookId(Long Book_id);
 }
 

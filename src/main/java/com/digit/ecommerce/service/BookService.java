@@ -31,7 +31,6 @@ public class BookService implements BooksInterface{
     @Autowired
     UserRepository userRepository;
 
-
     public ResponseEntity<?> addBooks(BooksDto booksDto, String token) {
         DataHolder dataHolder = tokenUtility.decode(token);
         String requiredRole = "admin";
@@ -89,14 +88,14 @@ public class BookService implements BooksInterface{
         }
     }
 
-
     public BooksDto updateBooks(Long id, BooksDto bookDetails , String token) {
         DataHolder dataHolder = tokenUtility.decode(token);
         String requiredRole = "admin";
         Books books=new Books(bookDetails);
         Long Admin_id = dataHolder.getId();
         User objUser = userRepository.findById(Admin_id).orElse(null);
-        if (requiredRole.equalsIgnoreCase(dataHolder.getRole())&& objUser != null) {
+       // Books books=new Books(bookDetails);
+        if (requiredRole.equalsIgnoreCase(dataHolder.getRole())) {
             Books existing = bookRepository.findById(id)
                     .orElseThrow(() -> new RuntimeException("Book not found with id: " + id));
             if (bookDetails.getBookAuthor() != null) {
@@ -142,22 +141,11 @@ public class BookService implements BooksInterface{
             throw new RoleNotAllowedException("Only admin can change the prices");
         }
     }
+    public Books getBookByID(Long id) {
+        Books book = bookRepository.findById(id).orElseThrow(() -> new RuntimeException("Book not found"));
+        return book;
+    }
 
-//public void updateQuantity(Order order) {
-    // Order BookId = bookRepository.getById();
-//        Books books = bookRepository.findById(book_Id).orElse(null);
-//        if (books != null) {
-//            if (status.equalsIgnoreCase("ordered")) {
-//                books.setBookQuantity(books.getBookQuantity() - quantity);
-//            } else {
-//                books.setBookQuantity(books.getBookQuantity() + quantity);
-//            }
-//            bookRepository.save(books);
-//        } else {
-//            // Handle the case where the book is not found
-//            System.out.println("Book not found");
-//        }
-//    }
 }
 
 

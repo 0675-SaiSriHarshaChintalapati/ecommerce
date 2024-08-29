@@ -16,7 +16,6 @@ import java.time.LocalDate;
 @AllArgsConstructor
 @NoArgsConstructor
 public class UserDTO {
-    private Long id;
     @NotBlank(message = "First name is mandatory")
     @Size(max = 255, message = "First name must be less than 255 characters")
     private String firstName;
@@ -47,7 +46,6 @@ public class UserDTO {
 
 
     public UserDTO(User user) {
-        this.id = user.getId();
         this.role = user.getRole();
         this.emailId = user.getEmailId();
         this.password = user.getPassword();

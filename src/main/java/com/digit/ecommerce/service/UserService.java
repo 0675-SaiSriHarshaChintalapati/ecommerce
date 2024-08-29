@@ -10,7 +10,6 @@ import com.digit.ecommerce.repository.UserRepository;
 import com.digit.ecommerce.util.TokenUtility;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
-
 import java.time.LocalDate;
 import java.util.List;
 import java.util.stream.Collectors;
@@ -104,7 +103,6 @@ public class UserService implements UserInterface{
 
     public UserDTO convertToDTO(User user) {
         UserDTO userDTO = new UserDTO(user);
-        userDTO.setId(user.getId());
         userDTO.setFirstName(user.getFirstName());
         userDTO.setLastName(user.getLastName());
         userDTO.setDob(user.getDob());
@@ -116,14 +114,12 @@ public class UserService implements UserInterface{
 
     public User convertToEntity(UserDTO userDTO) {
         User user = new User();
-        user.setId(userDTO.getId());
         user.setFirstName(userDTO.getFirstName());
         user.setLastName(userDTO.getLastName());
         user.setDob(userDTO.getDob());
         user.setEmailId(userDTO.getEmailId());
         user.setRole(userDTO.getRole());
         user.setPassword(userDTO.getPassword());
-
         return user;
     }
 

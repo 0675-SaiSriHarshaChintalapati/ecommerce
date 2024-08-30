@@ -33,8 +33,6 @@ public class Orders {
     private Books book;
 
 
-
-
     public Orders(OrderDTO orderDTO, User user, Books book) {
         this.orderDate = LocalDate.now();
         this.price = book.getBookPrice();

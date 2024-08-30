@@ -39,19 +39,17 @@ public class OrderService {
 
 
     public Orders placeOrder(String token, String address) {
-        DataHolder dataHolder=tokenUtility.decode(token);
+       // DataHolder dataHolder=tokenUtility.decode(token);
 //      Long userId=dataHolder.getId();
         List<Cart> cartItems = cartService.getAllCartItemsForUser(token);
         if (cartItems.isEmpty()) {
             throw new RuntimeException("Cart is empty");
         }
-
         Orders order = new Orders();
-       // order.setUser(user);
+
         order.setOrderDate(LocalDate.now());
         order.setStatus("ordered");
         order.setAddress(address);
-
         double totalPrice = 0;
         for (Cart cartItem : cartItems) {
             Books book = cartItem.getBook();
@@ -76,6 +74,7 @@ public class OrderService {
     }
 
     public List<Orders> getAllOrders(boolean cancel) {
+
         return orderRepository.findByCancel(cancel);
     }
 

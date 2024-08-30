@@ -24,6 +24,7 @@ public class AddImage {
     private String imageType;
 
     public AddImage(ImageDto imageDto) {
+
         this.image = imageDto.getImage();
     }
 }

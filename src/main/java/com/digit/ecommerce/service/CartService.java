@@ -94,15 +94,26 @@ public class CartService {
 
     public List<Cart> getAllCartItemsForUser(String token) {
         DataHolder dataHolder = tokenUtility.decode(token);
-        List<UserDTO> cart = userService.getUsersCart(token);
-        List<Cart> userCartItems = new ArrayList<>();
-        for (UserDTO userDTO : cart) {
-            Cart userCartItem = cartRepository.findById(dataHolder.getId())
-                    .orElseThrow(() -> new RuntimeException("User Id NOT found"));
-            userCartItems.add(userCartItem);
+        Long userId = dataHolder.getId();
+        User user = userService.getUserByToken(token);
+        if (user == null) {
+            throw new RuntimeException("User Id NOT found");
         }
-        return userCartItems;
+        return user.getCart();
     }
+
+
+//    public List<Cart> getAllCartItemsForUser(String token) {
+//        DataHolder dataHolder = tokenUtility.decode(token);
+//        List<UserDTO> cart = userService.getUsersCart(token);
+//        List<Cart> userCartItems = new ArrayList<>();
+//        for (UserDTO userDTO : cart) {
+//            Cart userCartItem = cartRepository.findById(dataHolder.getId())
+//                    .orElseThrow(() -> new RuntimeException("User Id NOT found"));
+//            userCartItems.add(userCartItem);
+//        }
+//        return userCartItems;
+//    }
 
     public List<CartDTO> getAllCartItems(String token){
         User userModel = userService.getUserByToken(token);

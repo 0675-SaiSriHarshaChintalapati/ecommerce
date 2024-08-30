@@ -48,6 +48,12 @@ public class UserService implements UserInterface{
         return allUserData.stream().map(UserDTO::new).collect(Collectors.toList());
     }
 
+    public List<UserDTO> getUsersCart(String token) {
+        DataHolder dataHolder=tokenUtility.decode(token);
+        List<User> allUserData = userRepository.findAll();
+        return allUserData.stream().map(UserDTO::new).collect(Collectors.toList());
+    }
+
     public User getUserByToken(String token) {
         DataHolder decode = tokenUtility.decode(token);
         Long id= decode.getId();

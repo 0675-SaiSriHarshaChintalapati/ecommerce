@@ -61,9 +61,9 @@ public class BookController {
 //    public ResponseEntity<?> change(@RequestHeader String token, @PathVariable long book_id, @PathVariable Long quantity) {
 //        return new ResponseEntity<>(bookService.changeQuantityByToken(token, book_id, quantity), HttpStatus.ACCEPTED);
 //    }
-    @PutMapping("/quantity/{Book_id}/{quantity}")
-    public ResponseEntity<BooksDto> updateBooksQuantity(@RequestHeader String token, @PathVariable Long Book_id, @PathVariable Long quantity) {
-        BooksDto updated = bookService.updateQuantity(token, Book_id, quantity);
+    @PutMapping("/quantity/{Book_id}/{orderId}")
+    public ResponseEntity<BooksDto> updateBooksQuantity(@RequestHeader String token, @PathVariable Long Book_id, @PathVariable Long orderId) {
+        BooksDto updated = bookService.updateQuantity(token, Book_id, orderId);
         return ResponseEntity.ok(updated);
 
 

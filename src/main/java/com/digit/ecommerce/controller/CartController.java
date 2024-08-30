@@ -22,6 +22,7 @@ public class CartController {
 
     @DeleteMapping("/delete/{cartId}")
     public String deleteCart(@PathVariable Long cartId){
+
         return cartService.removefromCart(cartId);
     }
 

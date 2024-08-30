@@ -33,6 +33,11 @@ public class User {
     @JsonManagedReference(value = "cartref")
     private List<Cart> cart;
 
+
+    @OneToMany(cascade = CascadeType.PERSIST,mappedBy = "user")
+    @JsonManagedReference(value = "cartref")
+    private List<Orders> order;
+
     public User(UserDTO userdto) {
 
         this.role = userdto.getRole();

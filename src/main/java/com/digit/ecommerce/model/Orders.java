@@ -42,7 +42,7 @@ public class Orders {
         this.address = orderDTO.getAddress();
         this.cancel = false;
         this.status = "ordered";
-        this.user = user;
-        this.book = book;
+        //this.user = user;
+        //this.book = book;
     }
 }

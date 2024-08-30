@@ -1,11 +1,14 @@
 package com.digit.ecommerce.model;
 
 import com.digit.ecommerce.dto.BooksDto;
+import com.fasterxml.jackson.annotation.JsonManagedReference;
 import jakarta.persistence.*;
 import lombok.AllArgsConstructor;
 import lombok.Data;
 import lombok.NoArgsConstructor;
 import org.hibernate.engine.internal.Cascade;
+
+import java.util.List;
 
 @AllArgsConstructor
 @NoArgsConstructor

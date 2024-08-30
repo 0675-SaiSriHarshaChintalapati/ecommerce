@@ -1,14 +1,17 @@
 package com.digit.ecommerce.service;
-
+import com.digit.ecommerce.dto.DataHolder;
 import com.digit.ecommerce.dto.OrderDTO;
 import com.digit.ecommerce.exception.OrderNotFoundException;
 import com.digit.ecommerce.model.Books;
+import com.digit.ecommerce.model.Cart;
 import com.digit.ecommerce.model.Orders;
 import com.digit.ecommerce.model.User;
 import com.digit.ecommerce.repository.BookRepository;
+import com.digit.ecommerce.repository.CartRepository;
 import com.digit.ecommerce.repository.OrderRepository;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
+import com.digit.ecommerce.util.TokenUtility;
 
 import java.time.LocalDate;
 import java.util.List;
@@ -20,23 +23,50 @@ public class OrderService {
     private OrderRepository orderRepository;
 
     @Autowired
+    CartService cartService;
+
+    @Autowired
     private BookRepository bookRepository;
 
-    public Orders placeOrder(String token, OrderDTO orderDTO) {
+    @Autowired
+    private CartRepository cartRepository;
 
-        Books book = bookRepository.findById(orderDTO.getBookId())
-                .orElseThrow(() -> new RuntimeException("Book not found with id: " + orderDTO.getBookId()));
+    @Autowired
+    private UserService userService;
+
+    @Autowired
+    TokenUtility tokenUtility;
 
 
-        Long userId = extractUserIdFromToken(token);
-        User user = new User();
-        user.setId(userId);
+    public Orders placeOrder(String token, String address) {
+        DataHolder dataHolder=tokenUtility.decode(token);
+//      Long userId=dataHolder.getId();
+        List<Cart> cartItems = cartService.getAllCartItemsForUser(token);
+        if (cartItems.isEmpty()) {
+            throw new RuntimeException("Cart is empty");
+        }
 
-        Orders order = new Orders(orderDTO, user, book);
-        return orderRepository.save(order);
+        Orders order = new Orders();
+       // order.setUser(user);
+        order.setOrderDate(LocalDate.now());
+        order.setStatus("ordered");
+        order.setAddress(address);
+
+        double totalPrice = 0;
+        for (Cart cartItem : cartItems) {
+            Books book = cartItem.getBook();
+            totalPrice += book.getBookPrice() * cartItem.getQuantity();
+            cartRepository.delete(cartItem); // Remove item from cart after placing order
+        }
+
+        order.setPrice(totalPrice);
+        orderRepository.save(order);
+
+        return order;
     }
 
     public boolean cancelOrder(String token, Long orderId) {
+       DataHolder dataHolder=tokenUtility.decode(token);
         Orders order = orderRepository.findById(orderId)
                 .orElseThrow(() -> new OrderNotFoundException("Order not found with id: " + orderId));
         order.setCancel(true);
@@ -50,12 +80,10 @@ public class OrderService {
     }
 
     public List<Orders> getAllOrdersForUser(String token) {
-        Long userId = extractUserIdFromToken(token);
+        DataHolder dataHolder=tokenUtility.decode(token);
+        Long userId = dataHolder.getId();
         return orderRepository.findByUserId(userId);
     }
 
-    private Long extractUserIdFromToken(String token) {
-        // Implement token parsing logic here
-        return 1L; // Example userId
-    }
+
 }

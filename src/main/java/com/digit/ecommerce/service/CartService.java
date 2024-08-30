@@ -93,7 +93,7 @@ public class CartService {
         List<Cart> userCartItems = new ArrayList<>();
         for (UserDTO userDTO : cart) {
             Cart userCartItem = cartRepository.findById(dataHolder.getId())
-                    .orElseThrow(() -> new RuntimeException("User Id not found"));
+                    .orElseThrow(() -> new RuntimeException("User Id NOT found"));
             userCartItems.add(userCartItem);
         }
         return userCartItems;

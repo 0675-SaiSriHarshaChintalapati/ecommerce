@@ -1,6 +1,5 @@
 package com.digit.ecommerce.controller;
 
-import com.digit.ecommerce.dto.OrderDTO;
 import com.digit.ecommerce.model.Orders;
 import com.digit.ecommerce.service.OrderService;
 import org.springframework.beans.factory.annotation.Autowired;
@@ -16,8 +15,8 @@ public class OrderController {
     private OrderService orderService;
 
     @PostMapping("/placeorder")
-    public Orders placeOrder(@RequestHeader("token") String token, @RequestBody OrderDTO orderDTO) {
-        return orderService.placeOrder(token, orderDTO);
+    public Orders placeOrder(@RequestHeader("token") String token, @RequestBody String address) {
+        return orderService.placeOrder(token, address);
     }
 
     @PutMapping("/cancelorder/{orderId}")
@@ -34,5 +33,4 @@ public class OrderController {
     public List<Orders> getAllOrdersForUser(@RequestHeader("token") String token) {
         return orderService.getAllOrdersForUser(token);
     }
-
 }

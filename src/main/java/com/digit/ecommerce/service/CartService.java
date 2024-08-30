@@ -4,6 +4,8 @@ import com.digit.ecommerce.dto.CartDTO;
 import com.digit.ecommerce.dto.DataHolder;
 import com.digit.ecommerce.dto.UserDTO;
 import com.digit.ecommerce.exception.AccessDeniedException;
+import com.digit.ecommerce.exception.BookIdNotFoundException;
+import com.digit.ecommerce.exception.CartIdNotFoundException;
 import com.digit.ecommerce.model.Books;
 import com.digit.ecommerce.model.Cart;
 import com.digit.ecommerce.model.User;
@@ -14,13 +16,9 @@ import jakarta.transaction.Transactional;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.http.ResponseEntity;
 import org.springframework.stereotype.Service;
-
-import javax.xml.crypto.Data;
-import java.awt.print.Book;
 import java.util.ArrayList;
 import java.util.Base64;
 import java.util.List;
-import java.util.stream.Collectors;
 
 @Service
 public class CartService {
@@ -37,20 +35,27 @@ public class CartService {
     BookRepository bookRepository;
 
     public CartDTO addtoCart(String token,Long bookId){
-        //DataHolder dataHolder=tokenUtility.decode(token);
-        Books book=bookService.getBookByID(bookId);
-        User user=userService.getUserByToken(token);
-        Cart cart=new Cart();
-        cart.setUser(user);
-        cart.setBook(book);
-        cart.setQuantity(1L);
-        cart.setTotalPrice(book.getBookPrice());
-        Cart cartModel=cartRepository.save(cart);
-        CartDTO cartDTO=carttoCartDTO(cartModel);
-        return cartDTO;
+        DataHolder dataHolder=tokenUtility.decode(token);
+        Books book1=bookRepository.findById(bookId).orElse(null);
+        if(book1!=null) {
+            Books book = bookService.getBookByID(bookId);
+            User user = userService.getUserByToken(token);
+            Cart cart = new Cart();
+            cart.setUser(user);
+            cart.setBook(book);
+            cart.setQuantity(1L);
+            cart.setTotalPrice(book.getBookPrice());
+            Cart cartModel = cartRepository.save(cart);
+            CartDTO cartDTO = carttoCartDTO(cartModel);
+            return cartDTO;
+        }
+        else{
+            throw new BookIdNotFoundException("Book Id Not Found.");
+        }
     }
 
     public String removefromCart(Long cartId){
+        Cart cart=cartRepository.findById(cartId).orElseThrow(()-> new CartIdNotFoundException("Cart Id Not Found"));
         cartRepository.deleteById(cartId);
         return "Successfully deleted cart with Id: "+cartId;
     }
@@ -63,7 +68,7 @@ public class CartService {
         for(Cart c : cart){
             cartRepository.deleteAll(c.getId());
         }
-        return "Removed ";
+        return "Removed Cart items with id :"+dataHolder.getId();
     }
 
     public CartDTO updateQunatity(String token,Long cartId,Long cartQuantity){
@@ -100,14 +105,14 @@ public class CartService {
     }
 
     public List<CartDTO> getAllCartItems(String token){
-        DataHolder dataHolder = tokenUtility.decode(token);
-        if(!dataHolder.getRole().equalsIgnoreCase("admin")){
-            throw new AccessDeniedException("Only Admins can view all cart items");
+        User userModel = userService.getUserByToken(token);
+        List<Cart> cart = userModel.getCart();
+        //List<Cart> userCartItems = new ArrayList<>();
+        List<CartDTO> userCartItems=new ArrayList<>();
+        for(Cart c : cart){
+            userCartItems.add(carttoCartDTO(c));
         }
-        List<Cart> carts=cartRepository.findAll();
-        return carts.stream()
-                .map(this::carttoCartDTO)
-                .collect(Collectors.toList());
+        return userCartItems;
     }
 
     public Cart cartDTOtocart(CartDTO cartDTO){
@@ -118,5 +123,4 @@ public class CartService {
         CartDTO cartDTO=new CartDTO(cart);
         return cartDTO;
     }
-
 }

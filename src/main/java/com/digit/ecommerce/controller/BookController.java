@@ -25,27 +25,27 @@ public class BookController {
     }
 
     @GetMapping("/viewBooks")
-    public ResponseEntity<List<BooksDto>> viewAllBooks(String token) {
+    public ResponseEntity<List<BooksDto>> viewAllBooks(@RequestHeader String token) {
         List<BooksDto> booksDtoList = bookService.viewAllBooks(token);
         return ResponseEntity.ok(booksDtoList);
     }
 
     @DeleteMapping("/delete/{Book_id}")
-    public ResponseEntity<String> deleteBook(@PathVariable Long id,@RequestHeader String token) {
-        bookService.deleteBook(id,token);
+    public ResponseEntity<String> deleteBook(@PathVariable Long Book_id,@RequestHeader String token) {
+        bookService.deleteBook(Book_id,token);
         return new ResponseEntity<>("Deleted",HttpStatus.OK);
     }
 
     @PutMapping("/update/{Book_id}")
-    public ResponseEntity<BooksDto> updateBooks(@PathVariable Long id, @RequestBody Books books,@RequestHeader String token) {
-        BooksDto updated = bookService.updateBooks(id, books,token);
+    public ResponseEntity<BooksDto> updateBooks(@PathVariable Long Book_id, @RequestBody Books books,@RequestHeader String token) {
+        BooksDto updated = bookService.updateBooks(Book_id, books,token);
         return ResponseEntity.ok(updated);
     }
 
 
-    @PutMapping("/update/price/{id}")
-    public ResponseEntity<BooksDto> updateBooksPrice(@PathVariable Long id, @RequestBody Books books, @RequestHeader String token) {
-        BooksDto updated = bookService.updatePrice(id, books,token);
+    @PutMapping("/update/price/{Book_id}")
+    public ResponseEntity<BooksDto> updateBooksPrice(@PathVariable Long Book_id, @RequestBody Books books, @RequestHeader String token) {
+        BooksDto updated = bookService.updatePrice(Book_id, books,token);
         return ResponseEntity.ok(updated);
     }
 }

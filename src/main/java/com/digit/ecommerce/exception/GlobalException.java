@@ -30,5 +30,9 @@ public class GlobalException {
     public ResponseEntity<?> RoleNotAllowedException(RoleNotAllowedException e){
         return new ResponseEntity<>(e.getMessage(),HttpStatus.BAD_REQUEST);
     }
+//    @ExceptionHandler(RuntimeException.class)
+//    public ResponseEntity<?> RuntimeException(RuntimeException e){
+//        return new ResponseEntity<>(e.getMessage(),HttpStatus.BAD_REQUEST);
+//    }
 }
 

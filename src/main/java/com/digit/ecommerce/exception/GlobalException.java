@@ -30,5 +30,14 @@ public class GlobalException {
     public ResponseEntity<?> RoleNotAllowedException(RoleNotAllowedException e){
         return new ResponseEntity<>(e.getMessage(),HttpStatus.BAD_REQUEST);
     }
+
+    @ExceptionHandler(CartIdNotFoundException.class)
+    public ResponseEntity<?> CartIdNotFoundException(CartIdNotFoundException e){
+        return new ResponseEntity<>(e.getMessage(),HttpStatus.BAD_REQUEST);
+    }
+    @ExceptionHandler(BookLimitException.class)
+    public ResponseEntity<?> BookLimitException(CartIdNotFoundException e){
+        return new ResponseEntity<>(e.getMessage(),HttpStatus.BAD_REQUEST);
+    }
 }
 

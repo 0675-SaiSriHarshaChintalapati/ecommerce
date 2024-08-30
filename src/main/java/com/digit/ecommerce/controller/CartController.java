@@ -17,7 +17,7 @@ public class CartController {
 
     @PostMapping("/add/{bookId}")
     public ResponseEntity<?> addtoCart(@RequestHeader String token,@PathVariable Long bookId){
-        return new ResponseEntity<>(cartService.addtoCart(token,bookId),HttpStatus.CREATED);
+        return new ResponseEntity<>(cartService.addtoCart(token,bookId),HttpStatus.OK);
     }
 
     @DeleteMapping("/delete/{cartId}")
@@ -32,9 +32,15 @@ public class CartController {
     }
 
 
-    @PutMapping("/update/{cartId}/{quantity}")
+    @PutMapping("/updateincreasequnatity/{cartId}/{quantity}")
     public ResponseEntity<?> updateQunatity(@RequestHeader String token,@PathVariable Long cartId,@PathVariable Long quantity){
         return new ResponseEntity<>(cartService.updateQunatity(token, cartId, quantity),HttpStatus.CREATED);
+    }
+
+    @PutMapping("/updatedeacreasequantity/{cart_id}/{quantity}")
+    public ResponseEntity<?> decreaseQuantity(@RequestHeader String token,@PathVariable long cart_id,@PathVariable long quantity){
+        return new ResponseEntity<>(cartService.decreaseQuantity(token,cart_id,quantity),HttpStatus.OK);
+
     }
 
     @GetMapping("/cartforuser")

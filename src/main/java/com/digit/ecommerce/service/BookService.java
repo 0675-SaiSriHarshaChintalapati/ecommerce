@@ -3,10 +3,12 @@ import com.digit.ecommerce.dto.BooksDto;
 import com.digit.ecommerce.dto.DataHolder;
 import com.digit.ecommerce.exception.DataNotFoundException;
 import com.digit.ecommerce.exception.RoleNotAllowedException;
+import com.digit.ecommerce.model.AddImage;
 import com.digit.ecommerce.model.Books;
 import com.digit.ecommerce.model.Orders;
 import com.digit.ecommerce.model.User;
 import com.digit.ecommerce.repository.BookRepository;
+import com.digit.ecommerce.repository.ImageRepository;
 import com.digit.ecommerce.repository.OrderRepository;
 import com.digit.ecommerce.repository.UserRepository;
 import com.digit.ecommerce.util.TokenUtility;
@@ -15,8 +17,10 @@ import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
 import org.springframework.stereotype.Service;
+import org.springframework.transaction.annotation.Transactional;
 
 
+import java.awt.print.Book;
 import java.io.IOException;
 import java.util.List;
 import java.util.Optional;
@@ -37,6 +41,10 @@ public class BookService implements BooksInterface {
     @Autowired
     OrderRepository orderRepository;
 
+    @Autowired
+    ImageRepository imageRepository;
+
+    @Transactional
     public ResponseEntity<?> addBooks(BooksDto booksDto, String token) {
         DataHolder dataHolder = tokenUtility.decode(token);
         String requiredRole = "admin";
@@ -178,6 +186,19 @@ public class BookService implements BooksInterface {
         return new BooksDto(updatedBook);
     }
 
+    public BooksDto addImage(String token, Long bookId, Long imageId) {
+        DataHolder dataHolder = tokenUtility.decode(token);
+        String requiredRole = "admin";
+        Long Admin_id = dataHolder.getId();
+        Books book = getBookByID(bookId);
+        User objUser = userRepository.findById(Admin_id).orElse(null);
+        if (requiredRole.equalsIgnoreCase(dataHolder.getRole()) && objUser != null) {
+            AddImage image = imageRepository.findById(imageId).orElseThrow(()-> new DataNotFoundException("Image not found"));
+            book.setAddImage(image);
+            bookRepository.save(book);
+        }
+        return new BooksDto(book);
+    }
 
 
 //    public BooksDto updateQuantity(String token, Long bookId) {

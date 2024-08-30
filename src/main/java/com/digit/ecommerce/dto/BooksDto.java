@@ -24,7 +24,7 @@ public class BooksDto {
     @Size(max = 500, message = "Book description must be less than 500 characters")
     private String bookDescription;
 
-    private AddImage addImage; // Add this field
+    private AddImage addImage;
 
     @NotNull(message = "Book price is mandatory")
     @Positive(message = "Book price must be positive")

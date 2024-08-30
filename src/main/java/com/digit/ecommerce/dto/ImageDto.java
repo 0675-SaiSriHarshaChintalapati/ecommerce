@@ -8,8 +8,11 @@ import lombok.NoArgsConstructor;
 @NoArgsConstructor
 public class ImageDto {
     private byte[] image;
+    private String image_name;
 
-    public ImageDto(AddImage addImage) {
+
+    public ImageDto( AddImage addImage) {
         this.image = addImage.getImage();
+
     }
 }

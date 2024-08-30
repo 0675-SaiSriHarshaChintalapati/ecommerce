@@ -17,13 +17,16 @@ public class AddImage {
     @Column(name = "image_id")
     private Long id;
 
+    private String image_name;
+
     @Lob
     @Column(name = "book_logo")
     private byte[] image;
 
     private String imageType;
 
-    public AddImage(ImageDto imageDto) {
+    public AddImage(ImageDto imageDto){
         this.image = imageDto.getImage();
+
     }
 }

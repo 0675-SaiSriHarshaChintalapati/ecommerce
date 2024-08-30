@@ -19,13 +19,6 @@ public class BookController {
     BookService bookService;
 
 
-    //    @PostMapping(value="/addBooks", consumes = { "multipart/form-data" })
-//    public ResponseEntity<?> addBooks(
-//            @RequestPart("booksDto") BooksDto booksDto,
-//            @RequestPart("imageFile") MultipartFile imageFile,
-//            @RequestHeader String token) {
-//        return bookService.addBooks(booksDto, token, imageFile);
-//    }
     @PostMapping(value = "/addBooks")
     public ResponseEntity<?> addBooks(@RequestBody BooksDto booksDto, @RequestHeader String token) {
         return bookService.addBooks(booksDto, token);
@@ -57,16 +50,16 @@ public class BookController {
         return ResponseEntity.ok(updated);
     }
 
-    //    @PutMapping("/change_quantity/{book_id}/{quantity}")
-//    public ResponseEntity<?> change(@RequestHeader String token, @PathVariable long book_id, @PathVariable Long quantity) {
-//        return new ResponseEntity<>(bookService.changeQuantityByToken(token, book_id, quantity), HttpStatus.ACCEPTED);
-//    }
+
     @PutMapping("/quantity/{Book_id}/{orderId}")
     public ResponseEntity<BooksDto> updateBooksQuantity(@RequestHeader String token, @PathVariable Long Book_id, @PathVariable Long orderId) {
         BooksDto updated = bookService.updateQuantity(token, Book_id, orderId);
         return ResponseEntity.ok(updated);
-
-
+    }
+    @PutMapping("/addImage/{book_id}/{image_id}")
+    public ResponseEntity<BooksDto> addImage(@RequestHeader String token,@PathVariable Long book_id,@PathVariable Long image_id)
+    {
+        return new ResponseEntity<>(bookService.addImage(token,book_id,image_id),HttpStatus.CREATED);
     }
 }
 

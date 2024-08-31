@@ -3,10 +3,9 @@ package com.digit.ecommerce.model;
 import com.digit.ecommerce.dto.OrderDTO;
 import lombok.AllArgsConstructor;
 import lombok.Data;
-
-import jakarta.persistence.*;
 import lombok.NoArgsConstructor;
 
+import jakarta.persistence.*;
 import java.time.LocalDate;
 
 @Data
@@ -18,11 +17,12 @@ public class Orders {
     @GeneratedValue(strategy = GenerationType.IDENTITY)
     private Long id;
     private LocalDate orderDate;
-    private double price;
-    private int quantity;
+    private Long price;
+    private Long quantity;
     private String address;
     private boolean cancel;
     private String status;
+    private String shippingStatus; // New column
 
     @ManyToOne
     @JoinColumn(name = "user_id")
@@ -32,7 +32,6 @@ public class Orders {
     @JoinColumn(name = "book_id")
     private Books book;
 
-
     public Orders(OrderDTO orderDTO, User user, Books book) {
         this.orderDate = LocalDate.now();
         this.price = book.getBookPrice();
@@ -40,7 +39,8 @@ public class Orders {
         this.address = orderDTO.getAddress();
         this.cancel = false;
         this.status = "ordered";
-        //this.user = user;
-        //this.book = book;
+        this.shippingStatus = "placed"; // Set initial shipping status
+        this.user = user;
+        this.book = book;
     }
 }

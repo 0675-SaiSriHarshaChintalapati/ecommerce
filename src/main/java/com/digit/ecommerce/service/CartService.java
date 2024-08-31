@@ -128,6 +128,17 @@ public class CartService {
         }
         return cartDTO;
     }
+    public List<Cart> getAllCartItemsForUserModel(String token) {
+        DataHolder dataHolder = tokenUtility.decode(token);
+        List<Cart> cart=cartRepository.findAll();
+        List<Cart> userCartItems = new ArrayList<>();
+        for (Cart c : cart) {
+            if(c.getUser().getId().equals(dataHolder.getId())){
+                userCartItems.add(c);
+            }
+        }
+        return userCartItems;
+    }
     public List<CartDTO> getAllCartItems(String token) {
         DataHolder dataHolder = tokenUtility.decode(token);
         List<Cart> userCartItems = new ArrayList<>();

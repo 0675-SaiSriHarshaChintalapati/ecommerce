@@ -3,6 +3,9 @@ package com.digit.ecommerce.controller;
 import com.digit.ecommerce.model.Orders;
 import com.digit.ecommerce.service.OrderService;
 import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.http.HttpStatus;
+import org.springframework.http.HttpStatusCode;
+import org.springframework.http.ResponseEntity;
 import org.springframework.web.bind.annotation.*;
 
 import java.util.List;
@@ -15,13 +18,19 @@ public class OrderController {
     private OrderService orderService;
 
     @PostMapping("/placeorder")
-    public Orders placeOrder(@RequestHeader("token") String token, @RequestBody String address) {
-        return orderService.placeOrder(token, address);
+   public ResponseEntity<?> placeOrder(@RequestHeader("token") String token ,@RequestBody String address) {
+        return new ResponseEntity<>(orderService.placeOrder(token, address), HttpStatus.CREATED);
     }
 
     @PutMapping("/cancelorder/{orderId}")
     public boolean cancelOrder(@RequestHeader("token") String token, @PathVariable Long orderId) {
         return orderService.cancelOrder(token, orderId);
+    }
+
+    @PutMapping("/updateShippingStatus/{orderId}")
+    public ResponseEntity<Orders> updateShippingStatus(@RequestHeader("token") String token, @PathVariable Long orderId, @RequestParam String newStatus) {
+        Orders updatedOrder = orderService.updateShippingStatus(token, orderId, newStatus);
+        return ResponseEntity.ok(updatedOrder);
     }
 
     @GetMapping("/getallorders")

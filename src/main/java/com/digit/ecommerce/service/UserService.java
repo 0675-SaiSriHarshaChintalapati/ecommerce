@@ -1,4 +1,5 @@
 package com.digit.ecommerce.service;
+import com.digit.ecommerce.config.PasswordEncryption;
 import com.digit.ecommerce.dto.DataHolder;
 import com.digit.ecommerce.dto.LoginDTO;
 import com.digit.ecommerce.dto.UserDTO;
@@ -10,7 +11,6 @@ import com.digit.ecommerce.repository.UserRepository;
 import com.digit.ecommerce.util.TokenUtility;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
-
 import java.time.LocalDate;
 import java.util.List;
 import java.util.stream.Collectors;
@@ -21,14 +21,20 @@ public class UserService implements UserInterface{
     private UserRepository userRepository;
     @Autowired
     TokenUtility tokenUtility;
+
+    @Autowired
+    PasswordEncryption passwordEncryption;
+
     public UserDTO saveUser(UserDTO userdto) {
         User userByUsername = userRepository.findByfirstName(userdto.getFirstName());
         User userByEmail = userRepository.findByemailId(userdto.getEmailId());
         if ((userByUsername != null) || (userByEmail != null)||userdto == null) {
             throw new UserAlreadyExistException("User Already Exists with that credential");
         }
+
         User user=convertToEntity(userdto);
         UserDTO userdto1= convertToDTO(user);
+        user.setPassword(passwordEncryption.passwordEncoder().encode(user.getPassword()));
         userRepository.save(user);
         return userdto1;
     }
@@ -100,24 +106,27 @@ public class UserService implements UserInterface{
         return "User removed !! " + id;
     }
 
-    public String login(LoginDTO loginDTO) {
-        String userEmail = loginDTO.getEmailId();
-        String userPassword = loginDTO.getPassword();
-        User check = userRepository.findByemailId(userEmail);
-        if (check != null) {
-            if (userEmail.equals(check.getEmailId()) && (userPassword.equals(check.getPassword()))) {
-                String token = tokenUtility.getToken(check.getId(), check.getRole());
-                return token;
-            }
-            throw new AuthenticationException("User or password invalid!");
+
+public String login(LoginDTO loginDTO) {
+    String userEmail = loginDTO.getEmailId();
+    String rawPassword = loginDTO.getPassword();
+
+    User user = userRepository.findByemailId(userEmail);
+    if (user != null) {
+        boolean isPasswordMatch = passwordEncryption.verifyPassword(rawPassword, user.getPassword());
+        if (isPasswordMatch) {
+            String token = tokenUtility.getToken(user.getId(), user.getRole());
+            return token;
         } else {
-            throw new AuthenticationException("User does not exist");
+            throw new AuthenticationException("User or password invalid!");
         }
+    } else {
+        throw new AuthenticationException("User does not exist");
     }
+}
 
     public UserDTO convertToDTO(User user) {
         UserDTO userDTO = new UserDTO(user);
-
         userDTO.setFirstName(user.getFirstName());
         userDTO.setLastName(user.getLastName());
         userDTO.setDob(user.getDob());
@@ -135,7 +144,6 @@ public class UserService implements UserInterface{
         user.setEmailId(userDTO.getEmailId());
         user.setRole(userDTO.getRole());
         user.setPassword(userDTO.getPassword());
-
         return user;
     }
 

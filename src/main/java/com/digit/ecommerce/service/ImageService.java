@@ -28,6 +28,7 @@ public class ImageService implements ImageInterface {
         String requiredRole = "admin";
         if (requiredRole.equalsIgnoreCase(role)) {
             AddImage addImage = new AddImage();
+            addImage.setImage_name(image.getOriginalFilename());
             addImage.setImage(image.getBytes());
             addImage.setImageType(image.getContentType());
             ImageDto imageDto = new ImageDto(addImage);

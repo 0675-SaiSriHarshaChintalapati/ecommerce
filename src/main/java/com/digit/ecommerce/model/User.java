@@ -1,11 +1,12 @@
 package com.digit.ecommerce.model;
+
 import com.digit.ecommerce.dto.UserDTO;
 import com.fasterxml.jackson.annotation.JsonManagedReference;
 import jakarta.persistence.*;
-import jakarta.validation.constraints.*;
+import lombok.AllArgsConstructor;
 import lombok.Data;
 import lombok.NoArgsConstructor;
-import lombok.AllArgsConstructor;
+
 import java.time.LocalDate;
 import java.util.List;
 
@@ -29,17 +30,15 @@ public class User {
     private String emailId;
     private String role;
 
-    @OneToMany(cascade = CascadeType.PERSIST,mappedBy = "user")
-    @JsonManagedReference(value = "cartref")
+    @OneToMany(cascade = CascadeType.PERSIST, mappedBy = "user")
+    @JsonManagedReference
     private List<Cart> cart;
 
-
-    @OneToMany(cascade = CascadeType.PERSIST,mappedBy = "user")
-    @JsonManagedReference(value = "cartref")
+    @OneToMany(cascade = CascadeType.PERSIST, mappedBy = "user")
+    @JsonManagedReference
     private List<Orders> order;
 
     public User(UserDTO userdto) {
-
         this.role = userdto.getRole();
         this.emailId = userdto.getEmailId();
         this.password = userdto.getPassword();
@@ -50,4 +49,3 @@ public class User {
         this.firstName = userdto.getFirstName();
     }
 }
-

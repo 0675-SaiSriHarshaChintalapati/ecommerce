@@ -1,6 +1,7 @@
 package com.digit.ecommerce.model;
 
 import com.digit.ecommerce.dto.OrderDTO;
+import com.fasterxml.jackson.annotation.JsonIgnore;
 import lombok.AllArgsConstructor;
 import lombok.Data;
 import lombok.NoArgsConstructor;
@@ -26,6 +27,7 @@ public class Orders {
 
     @ManyToOne
     @JoinColumn(name = "user_id")
+    @JsonIgnore
     private User user;
 
     @ManyToOne
@@ -43,6 +45,4 @@ public class Orders {
         this.user = user;
         this.book = book;
     }
-
-
 }

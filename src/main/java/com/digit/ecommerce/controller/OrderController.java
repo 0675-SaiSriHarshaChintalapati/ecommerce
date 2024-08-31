@@ -1,10 +1,10 @@
 package com.digit.ecommerce.controller;
 
+import com.digit.ecommerce.dto.AddressDTO;
 import com.digit.ecommerce.model.Orders;
 import com.digit.ecommerce.service.OrderService;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.http.HttpStatus;
-import org.springframework.http.HttpStatusCode;
 import org.springframework.http.ResponseEntity;
 import org.springframework.web.bind.annotation.*;
 
@@ -18,8 +18,8 @@ public class OrderController {
     private OrderService orderService;
 
     @PostMapping("/placeorder")
-   public ResponseEntity<?> placeOrder(@RequestHeader("token") String token ,@RequestBody String address) {
-        return new ResponseEntity<>(orderService.placeOrder(token, address), HttpStatus.CREATED);
+    public ResponseEntity<?> placeOrder(@RequestHeader("token") String token, @RequestBody AddressDTO addressDTO) {
+        return new ResponseEntity<>(orderService.placeOrder(token, addressDTO), HttpStatus.CREATED);
     }
 
     @PutMapping("/cancelorder/{orderId}")

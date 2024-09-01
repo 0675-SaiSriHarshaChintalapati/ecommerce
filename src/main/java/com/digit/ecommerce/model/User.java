@@ -34,6 +34,7 @@ public class User {
     private List<Cart> cart;
 
     public User(UserDTO userdto) {
+
         this.role = userdto.getRole();
         this.emailId = userdto.getEmailId();
         this.password = userdto.getPassword();

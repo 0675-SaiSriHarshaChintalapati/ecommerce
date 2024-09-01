@@ -1,12 +1,11 @@
 package com.digit.ecommerce.model;
 
-
 import com.digit.ecommerce.dto.BooksDto;
 import jakarta.persistence.*;
 import lombok.AllArgsConstructor;
 import lombok.Data;
 import lombok.NoArgsConstructor;
-
+import org.hibernate.engine.internal.Cascade;
 
 @AllArgsConstructor
 @NoArgsConstructor
@@ -29,23 +28,22 @@ public class Books {
     @Column(name = "Book_description")
     private String bookDescription;
 
-    @Lob
-    @Column(name = "Book_logo")
-    private Byte[] bookLogo;
-
     @Column(name = "book_price")
     private Long bookPrice;
 
     @Column(name = "book_quantity")
     private Long bookQuantity;
 
+    @OneToOne(cascade = CascadeType.ALL)
+    @JoinColumn(name = "image_id" )
+    private AddImage addImage;
+
     public Books(BooksDto booksDto) {
         this.bookName = booksDto.getBookName();
         this.bookAuthor = booksDto.getBookAuthor();
         this.bookDescription = booksDto.getBookDescription();
-        this.bookLogo = booksDto.getBookLogo();
         this.bookPrice = booksDto.getBookPrice();
         this.bookQuantity = booksDto.getBookQuantity();
+        this.addImage = booksDto.getAddImage(); // Assuming BooksDto has a field for AddImage
     }
 }
-

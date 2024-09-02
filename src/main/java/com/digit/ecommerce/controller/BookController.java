@@ -20,9 +20,9 @@ public class BookController {
     BookService bookService;
 
 
-    @PostMapping(value = "/addBooks")
-    public ResponseEntity<?> addBooks(@RequestBody BooksDto booksDto, @RequestHeader String token) {
-        return bookService.addBooks(booksDto, token);
+    @PostMapping(value = "/addBooks/{imageId}")
+    public ResponseEntity<?> addBooks(@RequestBody BooksDto booksDto, @RequestHeader String token,@PathVariable Long imageId) {
+        return bookService.addBooks(booksDto,imageId,token);
     }
 
 
@@ -61,10 +61,6 @@ public class BookController {
         BooksDto updated = bookService.updateQuantity(token, Book_id, orderId);
         return ResponseEntity.ok(updated);
     }
-    @PutMapping("/addImage/{book_id}/{image_id}")
-    public ResponseEntity<BooksDto> addImage(@RequestHeader String token,@PathVariable Long book_id,@PathVariable Long image_id)
-    {
-        return new ResponseEntity<>(bookService.addImage(token,book_id,image_id),HttpStatus.CREATED);
-    }
+
 }
 

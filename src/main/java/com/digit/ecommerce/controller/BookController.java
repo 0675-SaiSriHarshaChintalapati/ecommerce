@@ -1,5 +1,6 @@
 package com.digit.ecommerce.controller;
 
+import com.digit.ecommerce.model.Books;
 import com.digit.ecommerce.service.BookService;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.http.HttpStatus;
@@ -53,9 +54,10 @@ public class BookController {
      * @return ResponseEntity with the status and confirmation message
      */
     @DeleteMapping("/delete/{Book_id}")
-    public ResponseEntity<String> deleteBook(@PathVariable Long Book_id, @RequestHeader String token) {
-        bookService.deleteBook(Book_id, token);
-        return new ResponseEntity<>("Deleted", HttpStatus.OK);
+
+    public ResponseEntity<String> deleteBook(@PathVariable Long Book_id,@RequestHeader String token) {
+        bookService.deleteBook(Book_id,token);
+        return new ResponseEntity<>("Deleted",HttpStatus.OK);
     }
 
     /**
@@ -71,6 +73,7 @@ public class BookController {
     @PutMapping("/update/{Book_id}")
     public ResponseEntity<BooksDto> updateBooks(@PathVariable Long Book_id, @RequestBody BooksDto booksDto, @RequestHeader String token) {
         BooksDto updated = bookService.updateBooks(Book_id, booksDto, token);
+
         return ResponseEntity.ok(updated);
     }
 
@@ -85,8 +88,10 @@ public class BookController {
      * @return ResponseEntity with the updated BooksDto
      */
     @PutMapping("/update/price/{Book_id}")
+
     public ResponseEntity<BooksDto> updateBooksPrice(@PathVariable Long Book_id, @RequestBody BooksDto booksDto, @RequestHeader String token) {
         BooksDto updated = bookService.updatePrice(Book_id, booksDto, token);
+
         return ResponseEntity.ok(updated);
     }
 

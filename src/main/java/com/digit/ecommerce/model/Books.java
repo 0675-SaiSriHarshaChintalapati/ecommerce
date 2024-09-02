@@ -10,6 +10,7 @@ import org.hibernate.engine.internal.Cascade;
 
 import java.util.List;
 
+
 @AllArgsConstructor
 @NoArgsConstructor
 @Data
@@ -37,12 +38,17 @@ public class Books {
     @Column(name = "book_quantity")
     private Long bookQuantity;
 
+
+    @OneToMany(mappedBy = "book", cascade = CascadeType.PERSIST)
+    private List<Wishlist> wishlists;
+
     @OneToOne(cascade = CascadeType.PERSIST)
     @JoinColumn(name = "image_id" )
     private AddImage addImage;
 
     @OneToMany(mappedBy = "book",cascade = CascadeType.PERSIST)
     private List<Orders> orders;
+
 
     public Books(BooksDto booksDto) {
         this.bookName = booksDto.getBookName();

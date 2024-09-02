@@ -6,7 +6,7 @@ import lombok.Data;
 @Data
 public class OrderDTO {
     private Long bookId;
-    private int qty;
+    private Long qty;
     private String address;
 
 

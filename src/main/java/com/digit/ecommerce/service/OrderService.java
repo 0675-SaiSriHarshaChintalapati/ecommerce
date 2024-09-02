@@ -1,61 +1,116 @@
 package com.digit.ecommerce.service;
 
-import com.digit.ecommerce.dto.OrderDTO;
-import com.digit.ecommerce.exception.OrderNotFoundException;
-import com.digit.ecommerce.model.Books;
+import com.digit.ecommerce.dto.AddressDTO;
+import com.digit.ecommerce.dto.DataHolder;
+import com.digit.ecommerce.exception.RoleNotAllowedException;
+import com.digit.ecommerce.model.Cart;
 import com.digit.ecommerce.model.Orders;
 import com.digit.ecommerce.model.User;
-import com.digit.ecommerce.repository.BookRepository;
 import com.digit.ecommerce.repository.OrderRepository;
+import com.digit.ecommerce.util.TokenUtility;
 import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.http.HttpStatus;
+import org.springframework.http.ResponseEntity;
 import org.springframework.stereotype.Service;
 
 import java.time.LocalDate;
 import java.util.List;
+import java.util.stream.Collectors;
 
 @Service
-public class OrderService {
+public class OrderService implements OrderInterface {
 
     @Autowired
     private OrderRepository orderRepository;
 
     @Autowired
-    private BookRepository bookRepository;
+    private CartService cartService;
 
-    public Orders placeOrder(String token, OrderDTO orderDTO) {
+    @Autowired
+    private UserService userService;
 
-        Books book = bookRepository.findById(orderDTO.getBookId())
-                .orElseThrow(() -> new RuntimeException("Book not found with id: " + orderDTO.getBookId()));
+    @Autowired
+    private BookService bookService;
 
+    @Autowired
+    private TokenUtility tokenUtility;
 
-        Long userId = extractUserIdFromToken(token);
-        User user = new User();
-        user.setId(userId);
+    @Override
+    public ResponseEntity<?> placeOrder(String token, AddressDTO addressDTO) {
+        User user = userService.getUserByToken(token);
+        List<Cart> cartItems = cartService.getAllCartItemsForUserModel(token);
 
-        Orders order = new Orders(orderDTO, user, book);
-        return orderRepository.save(order);
+        String address = addressDTO.getStreet() + ", " + addressDTO.getCity() + ", " + addressDTO.getState() + " - " + addressDTO.getZip();
+
+        for (Cart cartItem : cartItems) {
+            Orders order = new Orders();
+            order.setUser(user);
+            order.setBook(cartItem.getBook());
+            order.setQuantity(cartItem.getQuantity());
+            order.setPrice(cartItem.getTotalPrice());
+            order.setAddress(address);
+            order.setOrderDate(LocalDate.now());
+            order.setCancel(false);
+            order.setStatus("ordered");
+            order.setShippingStatus("placed"); // Set initial shipping status
+
+            orderRepository.save(order);
+
+            // Update book quantity
+            bookService.updateQuantity(token, cartItem.getBook().getId(), cartItem.getQuantity());
+        }
+
+        cartService.removeByUserId(token); // Clear the cart after placing the order
+
+        return new ResponseEntity<>("Order placed successfully", HttpStatus.CREATED);
     }
 
+    @Override
     public boolean cancelOrder(String token, Long orderId) {
         Orders order = orderRepository.findById(orderId)
-                .orElseThrow(() -> new OrderNotFoundException("Order not found with id: " + orderId));
-        order.setCancel(true);
-        order.setStatus("cancelled");
-        orderRepository.save(order);
-        return true;
+                .orElseThrow(() -> new RuntimeException("Order not found with id: " + orderId));
+
+        if ("placed".equalsIgnoreCase(order.getShippingStatus())) {
+            order.setCancel(true);
+            order.setStatus("cancelled");
+            orderRepository.save(order);
+
+            // Update book quantity
+            bookService.updateQuantity(token, order.getBook().getId(), -order.getQuantity());
+
+            return true;
+        } else {
+            throw new RuntimeException("Order cannot be cancelled as it is already " + order.getShippingStatus());
+        }
     }
 
+    @Override
+    public Orders updateShippingStatus(String token, Long orderId, String newStatus) {
+        DataHolder dataHolder = tokenUtility.decode(token);
+        if (!"admin".equalsIgnoreCase(dataHolder.getRole())) {
+            throw new RoleNotAllowedException("Only admins can update the shipping status.");
+        }
+
+        Orders order = orderRepository.findById(orderId)
+                .orElseThrow(() -> new RuntimeException("Order not found with id: " + orderId));
+
+        if (!"cancelled".equalsIgnoreCase(order.getStatus())) {
+            order.setShippingStatus(newStatus);
+            return orderRepository.save(order);
+        } else {
+            throw new RuntimeException("Cannot change shipping status for cancelled orders.");
+        }
+    }
+
+    @Override
     public List<Orders> getAllOrders(boolean cancel) {
-        return orderRepository.findByCancel(cancel);
+        return orderRepository.findByCancel(cancel).stream().distinct().collect(Collectors.toList());
     }
 
+    @Override
     public List<Orders> getAllOrdersForUser(String token) {
-        Long userId = extractUserIdFromToken(token);
-        return orderRepository.findByUserId(userId);
-    }
-
-    private Long extractUserIdFromToken(String token) {
-        // Implement token parsing logic here
-        return 1L; // Example userId
+        DataHolder dataHolder = tokenUtility.decode(token);
+        Long userId = dataHolder.getId();
+        return orderRepository.findByUserId(userId).stream().distinct().collect(Collectors.toList());
     }
 }

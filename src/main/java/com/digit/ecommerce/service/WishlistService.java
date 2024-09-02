@@ -15,6 +15,7 @@ import com.digit.ecommerce.util.TokenUtility;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
 
+import java.util.ArrayList;
 import java.util.List;
 import java.util.stream.Collectors;
 
@@ -73,13 +74,30 @@ public class WishlistService {
 
         DataHolder dataHolder = tokenUtility.decode(token);
         if ((dataHolder.getRole().equalsIgnoreCase("Admin") || dataHolder.getRole().equalsIgnoreCase("User")) && token != null) {
-            List<Wishlist> retrieve = wishlistRepository.findAll();
-            List<WishlistDto> wishlistDtos = retrieve.stream()
-                    .map(WishlistDto::new)
-                    .collect(Collectors.toList());
+             if(dataHolder.getRole().equalsIgnoreCase("User")) {
+                 List<Wishlist> retr = wishlistRepository.findAll();
+                 List<Wishlist> retrieve1 = new ArrayList<>();
+                 for (Wishlist c : retr) {
+                     User user = c.getUser();
+                     if (user.getId().equals(dataHolder.getId())) {
+                         retrieve1.add(c);
+                     }
+                 }
+                 List<WishlistDto> wishlistDtos = retrieve1.stream()
+                         .map(WishlistDto::new)
+                         .toList();
+                 return wishlistDtos;
+             }
+             else {
+                 List<Wishlist> retrieve = wishlistRepository.findAll();
+                 List<WishlistDto> wishlistDtos = retrieve.stream()
+                         .map(WishlistDto::new)
+                         .collect(Collectors.toList());
 
-            return wishlistDtos;
-        } else {
+                 return wishlistDtos;
+             }
+            }
+        else {
             throw new RoleNotAllowedException("please login to access the data");
         }
     }

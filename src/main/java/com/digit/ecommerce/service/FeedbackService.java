@@ -36,7 +36,7 @@ public class FeedbackService {
     public ResponseEntity<String> submitFeedback(String token,Long book_id, Feedback feedback) {
         DataHolder dataHolder=tokenUtility.decode(token);
         Long userId=dataHolder.getId();
-        if(dataHolder.getRole().equals("User")) {
+        if(dataHolder.getRole().equalsIgnoreCase("User")) {
             Books book = bookRepository.findById(book_id).orElse(null);
             if (book != null) {
                 feedback.setBook_id(book_id);
@@ -64,8 +64,6 @@ public class FeedbackService {
             return new ResponseEntity<>("please login",HttpStatus.UNAUTHORIZED);
         }
     }
-
-
 }
 
 

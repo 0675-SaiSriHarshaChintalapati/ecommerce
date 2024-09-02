@@ -21,9 +21,9 @@ public class WishlistController {
         return wishlistService.addProduct(wishlistDto,token);
     }
 
-    @DeleteMapping("/{id}")
-    public ResponseEntity<?> removeProduct(@PathVariable Long id,@RequestHeader String token){
-        return new ResponseEntity<>(wishlistService.removeProduct(id,token), HttpStatus.FOUND);
+    @DeleteMapping("/{wishlist_id}")
+    public ResponseEntity<?> removeProduct(@PathVariable Long wishlist_id,@RequestHeader String token){
+        return new ResponseEntity<>(wishlistService.removeProduct(wishlist_id,token), HttpStatus.FOUND);
     }
 
     @GetMapping("/getall")
@@ -31,6 +31,5 @@ public class WishlistController {
     {
         return new ResponseEntity<>(wishlistService.getWishListAll(token),HttpStatus.OK);
     }
-
 
 }

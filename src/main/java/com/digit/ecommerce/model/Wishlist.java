@@ -25,6 +25,4 @@ public class Wishlist {
     @JoinColumn(name = "Book_id", referencedColumnName = "Book_id")
     private Books book;
 
-
-
 }

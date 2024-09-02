@@ -8,6 +8,7 @@ import org.springframework.http.ResponseEntity;
 import org.springframework.web.bind.annotation.*;
 import com.digit.ecommerce.dto.BooksDto;
 
+
 import java.util.List;
 
 
@@ -19,10 +20,11 @@ public class BookController {
     BookService bookService;
 
 
-    @PostMapping(value="/addBooks")
-    public ResponseEntity<?> addBooks(@RequestBody BooksDto booksDto,@RequestHeader String token) {
-        return  bookService.addBooks(booksDto,token);
+    @PostMapping(value = "/addBooks")
+    public ResponseEntity<?> addBooks(@RequestBody BooksDto booksDto, @RequestHeader String token) {
+        return bookService.addBooks(booksDto, token);
     }
+
 
     @GetMapping("/viewBooks")
     public ResponseEntity<List<BooksDto>> viewAllBooks(@RequestHeader String token) {
@@ -31,21 +33,38 @@ public class BookController {
     }
 
     @DeleteMapping("/delete/{Book_id}")
+
     public ResponseEntity<String> deleteBook(@PathVariable Long Book_id,@RequestHeader String token) {
         bookService.deleteBook(Book_id,token);
         return new ResponseEntity<>("Deleted",HttpStatus.OK);
     }
 
     @PutMapping("/update/{Book_id}")
-    public ResponseEntity<BooksDto> updateBooks(@PathVariable Long Book_id, @RequestBody Books books,@RequestHeader String token) {
-        BooksDto updated = bookService.updateBooks(Book_id, books,token);
+    public ResponseEntity<BooksDto> updateBooks(@PathVariable Long Book_id, @RequestBody BooksDto booksDto, @RequestHeader String token) {
+        BooksDto updated = bookService.updateBooks(Book_id, booksDto, token);
+
         return ResponseEntity.ok(updated);
     }
 
 
     @PutMapping("/update/price/{Book_id}")
-    public ResponseEntity<BooksDto> updateBooksPrice(@PathVariable Long Book_id, @RequestBody Books books, @RequestHeader String token) {
-        BooksDto updated = bookService.updatePrice(Book_id, books,token);
+
+    public ResponseEntity<BooksDto> updateBooksPrice(@PathVariable Long Book_id, @RequestBody BooksDto booksDto, @RequestHeader String token) {
+        BooksDto updated = bookService.updatePrice(Book_id, booksDto, token);
+
         return ResponseEntity.ok(updated);
     }
+
+
+    @PutMapping("/quantity/{Book_id}/{orderId}")
+    public ResponseEntity<BooksDto> updateBooksQuantity(@RequestHeader String token, @PathVariable Long Book_id, @PathVariable Long orderId) {
+        BooksDto updated = bookService.updateQuantity(token, Book_id, orderId);
+        return ResponseEntity.ok(updated);
+    }
+    @PutMapping("/addImage/{book_id}/{image_id}")
+    public ResponseEntity<BooksDto> addImage(@RequestHeader String token,@PathVariable Long book_id,@PathVariable Long image_id)
+    {
+        return new ResponseEntity<>(bookService.addImage(token,book_id,image_id),HttpStatus.CREATED);
+    }
 }
+

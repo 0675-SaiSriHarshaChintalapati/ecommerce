@@ -10,6 +10,9 @@ public interface BookRepository extends JpaRepository<Books, Long> {
 
     @Transactional
     Books findBybookName(String bookName);
+
+//    @Transactional
+//    Books getByQuantity(Long id);
 }
 
 

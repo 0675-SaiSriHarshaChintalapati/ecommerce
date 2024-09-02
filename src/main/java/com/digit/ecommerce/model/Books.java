@@ -1,11 +1,12 @@
 package com.digit.ecommerce.model;
 
-
 import com.digit.ecommerce.dto.BooksDto;
+import com.fasterxml.jackson.annotation.JsonManagedReference;
 import jakarta.persistence.*;
 import lombok.AllArgsConstructor;
 import lombok.Data;
 import lombok.NoArgsConstructor;
+import org.hibernate.engine.internal.Cascade;
 
 import java.util.List;
 
@@ -31,27 +32,30 @@ public class Books {
     @Column(name = "Book_description")
     private String bookDescription;
 
-    @Lob
-    @Column(name = "Book_logo")
-    private Byte[] bookLogo;
-
     @Column(name = "book_price")
     private Long bookPrice;
 
     @Column(name = "book_quantity")
     private Long bookQuantity;
 
+
     @OneToMany(mappedBy = "book", cascade = CascadeType.PERSIST)
     private List<Wishlist> wishlists;
+
+    @OneToOne(cascade = CascadeType.PERSIST)
+    @JoinColumn(name = "image_id" )
+    private AddImage addImage;
+
+    @OneToMany(mappedBy = "book",cascade = CascadeType.PERSIST)
+    private List<Orders> orders;
 
 
     public Books(BooksDto booksDto) {
         this.bookName = booksDto.getBookName();
         this.bookAuthor = booksDto.getBookAuthor();
         this.bookDescription = booksDto.getBookDescription();
-        this.bookLogo = booksDto.getBookLogo();
         this.bookPrice = booksDto.getBookPrice();
         this.bookQuantity = booksDto.getBookQuantity();
+        this.addImage = booksDto.getAddImage(); // Assuming BooksDto has a field for AddImage
     }
 }
-

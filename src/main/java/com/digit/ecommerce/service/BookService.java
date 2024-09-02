@@ -45,31 +45,37 @@ public class BookService implements BooksInterface {
     ImageRepository imageRepository;
 
     @Transactional
-    public ResponseEntity<?> addBooks(BooksDto booksDto, String token) {
+    public ResponseEntity<?> addBooks(BooksDto booksDto, Long imageId, String token) {
         DataHolder dataHolder = tokenUtility.decode(token);
         String requiredRole = "admin";
-        Long Admin_id = dataHolder.getId();
-        Books existBook = null;
-        User objUser = userRepository.findById(Admin_id).orElse(null);
-        Books objBook = new Books(booksDto);
-        if (requiredRole.equalsIgnoreCase(dataHolder.getRole()) && token != null && objUser != null) {
-            existBook = bookRepository.findBybookName(booksDto.getBookName());
-            if (existBook == null) {
-                Books savedBook = bookRepository.save(objBook);
-                BooksDto booksDto1 = new BooksDto(savedBook);
-                return new ResponseEntity<>(booksDto1, HttpStatus.CREATED);
-            } else {
-                Long quantity = existBook.getBookQuantity() + objBook.getBookQuantity();
-                existBook.setBookQuantity(quantity);
-                bookRepository.save(existBook);
-            }
-        } else {
-            throw new RoleNotAllowedException("Only Admin can add the books");
-        }
-        BooksDto updatedBookQuantity = new BooksDto(existBook);
-        return new ResponseEntity<>(updatedBookQuantity, HttpStatus.OK);
-    }
+        Long adminId = dataHolder.getId();
+        User objUser = userRepository.findById(adminId).orElse(null);
 
+        if (!requiredRole.equalsIgnoreCase(dataHolder.getRole()) || objUser == null) {
+            throw new RoleNotAllowedException("Only Admin can add books and images.");
+        }
+        Books existBook = bookRepository.findBybookName(booksDto.getBookName());
+        Books objBook = new Books(booksDto);
+        if (existBook == null) {
+            if (imageId != null) {
+                AddImage image = imageRepository.findById(imageId).orElseThrow(() -> new DataNotFoundException("Image not found"));
+                objBook.setAddImage(image);
+            }
+            Books savedBook = bookRepository.save(objBook);
+            BooksDto booksDto1 = new BooksDto(savedBook);
+            return new ResponseEntity<>(booksDto1, HttpStatus.CREATED);
+        } else {
+            Long quantity = existBook.getBookQuantity() + objBook.getBookQuantity();
+            existBook.setBookQuantity(quantity);
+            if (imageId != null) {
+                AddImage image = imageRepository.findById(imageId).orElseThrow(() -> new DataNotFoundException("Image not found"));
+                existBook.setAddImage(image);
+            }
+            bookRepository.save(existBook);
+            BooksDto updatedBookQuantity = new BooksDto(existBook);
+            return new ResponseEntity<>(updatedBookQuantity, HttpStatus.OK);
+        }
+    }
 
     public List<BooksDto> viewAllBooks(String token) {
         DataHolder dataHolder = tokenUtility.decode(token);
@@ -186,36 +192,7 @@ public class BookService implements BooksInterface {
         return new BooksDto(updatedBook);
     }
 
-    public BooksDto addImage(String token, Long bookId, Long imageId) {
-        DataHolder dataHolder = tokenUtility.decode(token);
-        String requiredRole = "admin";
-        Long Admin_id = dataHolder.getId();
-        Books book = getBookByID(bookId);
-        User objUser = userRepository.findById(Admin_id).orElse(null);
-        if (requiredRole.equalsIgnoreCase(dataHolder.getRole()) && objUser != null) {
-            AddImage image = imageRepository.findById(imageId).orElseThrow(()-> new DataNotFoundException("Image not found"));
-            book.setAddImage(image);
-            bookRepository.save(book);
-        }
-        return new BooksDto(book);
-    }
 
-
-//    public BooksDto updateQuantity(String token, Long bookId) {
-//        DataHolder dataHolder = tokenUtility.decode(token);
-//        Long userId = dataHolder.getId();
-//        Books book = bookRepository.findById(bookId).orElse(null);
-//        Orders order = orderRepository.findByBookId(bookId);
-//        if (order.getStatus().equalsIgnoreCase("cancelled")) {
-//            book.setBookQuantity(book.getBookQuantity() + order.getQuantity());
-//        } else if (order.getStatus().equalsIgnoreCase("ordered")) {
-//            book.setBookQuantity(book.getBookQuantity() - order.getQuantity());
-//        } else {
-//            throw new RuntimeException("Invalid status");
-//        }
-//        Books updatedBook = bookRepository.save(book);
-//        return new BooksDto(updatedBook);
-//    }
 
 }
 

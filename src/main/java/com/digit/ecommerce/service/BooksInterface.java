@@ -7,7 +7,7 @@ import org.springframework.web.multipart.MultipartFile;
 import java.util.List;
 
 public interface BooksInterface {
-   ResponseEntity<?> addBooks(BooksDto booksDto , String token);
+   ResponseEntity<?> addBooks(BooksDto booksDto ,  Long imageId,String token);
     public List<BooksDto> viewAllBooks(String token);
     public String deleteBook(Long id, String token);
     public BooksDto updateBooks(Long id, BooksDto bookDetails , String token);

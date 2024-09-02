@@ -56,6 +56,8 @@ public class User {
 }
 
 
+
+
 //package com.digit.ecommerce.model;
 //
 //import com.digit.ecommerce.dto.UserDTO;
@@ -87,6 +89,10 @@ public class User {
 //    private String password;
 //    private String emailId;
 //    private String role;
+//
+//    @OneToMany(mappedBy = "user", cascade = CascadeType.PERSIST)
+//    private List<Wishlist> wishlists;
+//
 //
 //    @OneToMany(cascade = CascadeType.PERSIST, mappedBy = "user")
 //    @JsonManagedReference

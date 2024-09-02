@@ -63,7 +63,7 @@ public class Books {
 }
 
 
-//
+
 //package com.digit.ecommerce.model;
 //
 //import com.digit.ecommerce.dto.BooksDto;
@@ -75,6 +75,7 @@ public class Books {
 //import org.hibernate.engine.internal.Cascade;
 //
 //import java.util.List;
+//
 //
 //@AllArgsConstructor
 //@NoArgsConstructor
@@ -103,9 +104,17 @@ public class Books {
 //    @Column(name = "book_quantity")
 //    private Long bookQuantity;
 //
-//    @OneToOne(cascade = CascadeType.ALL)
+//
+//    @OneToMany(mappedBy = "book", cascade = CascadeType.PERSIST)
+//    private List<Wishlist> wishlists;
+//
+//    @OneToOne(cascade = CascadeType.PERSIST)
 //    @JoinColumn(name = "image_id" )
 //    private AddImage addImage;
+//
+//    @OneToMany(mappedBy = "book",cascade = CascadeType.PERSIST)
+//    private List<Orders> orders;
+//
 //
 //    public Books(BooksDto booksDto) {
 //        this.bookName = booksDto.getBookName();
@@ -113,6 +122,6 @@ public class Books {
 //        this.bookDescription = booksDto.getBookDescription();
 //        this.bookPrice = booksDto.getBookPrice();
 //        this.bookQuantity = booksDto.getBookQuantity();
-//        this.addImage = booksDto.getAddImage();
+//        this.addImage = booksDto.getAddImage(); // Assuming BooksDto has a field for AddImage
 //    }
 //}

@@ -56,9 +56,16 @@ public class UserService implements UserInterface{
 
     public User getUserByToken(String token) {
         DataHolder decode = tokenUtility.decode(token);
-        Long id= decode.getId();
+        Long id = decode.getId();
         return userRepository.findById(id).orElse(null);
     }
+
+
+    //    public User getUserByToken(String token) {
+//        DataHolder decode = tokenUtility.decode(token);
+//        Long id= decode.getId();
+//        return userRepository.findById(id).orElse(null);
+//    }
     @Override
     public User updateUser(String token, User user) {
         DataHolder decode = tokenUtility.decode(token);

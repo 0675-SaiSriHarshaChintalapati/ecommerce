@@ -84,19 +84,32 @@ public class CartService {
     }
 
     public CartDTO updateQunatity(String token, Long cartId, Long cartQuantity) {
-        Cart cart = cartRepository.findById(cartId).orElseThrow(() -> new RuntimeException("Card id doesn't exist!"));
-        Books book = cart.getBook();
-        if (book.getBookQuantity() >= cart.getQuantity() + cartQuantity) {
-            Long finalQunatity = cart.getQuantity() + cartQuantity;
-            cart.setQuantity(finalQunatity);
-            cart.setTotalPrice(book.getBookPrice() * finalQunatity);
-            cartRepository.save(cart);
-            CartDTO cartDTO = carttoCartDTO(cart);
-            return cartDTO;
-
-        } else {
-            throw new BookLimitException("Required Book Quanity is greater than Available Book Qunatity");
+        DataHolder dataHolder = tokenUtility.decode(token);
+        List<Cart> cartList = cartRepository.findAll();
+        Cart cart1 = null;
+        for (Cart c : cartList) {
+            if (c.getId().equals(cartId)) {
+                cart1 = c;
+            }
         }
+        if (cart1.getUser().getId().equals(dataHolder.getId())) {
+            Cart cart = cartRepository.findById(cartId).orElseThrow(() -> new RuntimeException("Card id doesn't exist!"));
+            Books book = cart.getBook();
+            if (book.getBookQuantity() >= cart.getQuantity() + cartQuantity) {
+                Long finalQunatity = cart.getQuantity() + cartQuantity;
+                cart.setQuantity(finalQunatity);
+                cart.setTotalPrice(book.getBookPrice() * finalQunatity);
+                cartRepository.save(cart);
+                CartDTO cartDTO = carttoCartDTO(cart);
+                return cartDTO;
+
+            } else {
+                throw new BookLimitException("Required Book Quanity is greater than Available Book Qunatity");
+            }
+        }
+            else{
+                throw new DataNotFoundException("Enterd Token Value Is Not Matched");
+            }
     }
 
         public String decreaseQuantity(String token, long cartId, long update_quantity) {

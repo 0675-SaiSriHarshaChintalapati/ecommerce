@@ -14,8 +14,9 @@ public class WishlistDto {
 
     public WishlistDto(Wishlist wishlist) {
         this.id = wishlist.getId();
-        this.bookId = (wishlist.getBook() != null) ? wishlist.getBook().getId() : null;
+       this.bookId = wishlist.getBook().getId();
 
+        //(wishlist.getBook() != null) ? wishlist.getBook().getId() : null;
         //this.userId = (wishlist.getUser() != null) ? wishlist.getUser().getId() : null;
     }
 

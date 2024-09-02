@@ -6,6 +6,7 @@ import lombok.Data;
 import lombok.NoArgsConstructor;
 import lombok.AllArgsConstructor;
 import java.time.LocalDate;
+import java.util.List;
 
 @Data
 @NoArgsConstructor
@@ -26,6 +27,10 @@ public class User {
     private String password;
     private String emailId;
     private String role;
+
+    @OneToMany(mappedBy = "user", cascade = CascadeType.PERSIST)
+    private List<Wishlist> wishlists;
+
 
 
 

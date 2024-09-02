@@ -7,6 +7,8 @@ import lombok.AllArgsConstructor;
 import lombok.Data;
 import lombok.NoArgsConstructor;
 
+import java.util.List;
+
 
 @AllArgsConstructor
 @NoArgsConstructor
@@ -38,6 +40,10 @@ public class Books {
 
     @Column(name = "book_quantity")
     private Long bookQuantity;
+
+    @OneToMany(mappedBy = "book", cascade = CascadeType.PERSIST)
+    private List<Wishlist> wishlists;
+
 
     public Books(BooksDto booksDto) {
         this.bookName = booksDto.getBookName();
